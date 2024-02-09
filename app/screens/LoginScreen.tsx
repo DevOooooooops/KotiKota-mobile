@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite"
 import React, { FC } from "react"
 import { TouchableOpacity, View } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
-import { Avatar } from "app/components/Avatar/Avatar"
+// import { Avatar } from "app/components/Avatar/Avatar"
 import { ErrorBoundary } from "app/screens"
 import { KKText } from "app/components/Text/KKText"
 import { palette } from "app/theme/palette"
@@ -11,7 +11,7 @@ import { InputFieldPassword } from "app/components/InputField/InputFieldPassword
 import { Controller, useForm } from "react-hook-form"
 import IoniconIcon from "react-native-vector-icons/Ionicons"
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome"
-import { useStores } from "app/models"
+// import { useStores } from "app/models"
 
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
@@ -21,7 +21,7 @@ interface LoginData {
 }
 
 export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_props) {
-  const { authStore } = useStores()
+  /*const { authStore } = useStores()*/
   const {
     handleSubmit,
     control,
@@ -32,8 +32,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   })
 
   const onSubmit = async (loginData: LoginData) => {
-    console.tron.log(loginData)
-    await authStore.login(loginData.username, loginData.password)
+    /*console.tron.log(loginData)
+    await authStore.login(loginData.username, loginData.password)*/
   }
 
   return (
@@ -187,12 +187,12 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
           }}
           text={"CashQuest"}
         />
-        <Avatar
+        {/*<Avatar
           source={require("assets/images/cash-quest-logo.png")}
           resizeMode="stretch"
           resizeMethod="auto"
           style={{ height: 50, width: 50, marginLeft: 10 }}
-        />
+        />*/}
       </View>
     </ErrorBoundary>
   )
