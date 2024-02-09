@@ -20,6 +20,8 @@ import { useStores } from "../models"
 import { DemoNavigator, DemoTabParamList } from "./DemoNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
+import { TamaguiProvider } from 'tamagui';
+import { tamaguiConfig } from 'tamagui.config';
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -93,6 +95,7 @@ export const AppNavigator = observer(function AppNavigator(props: NavigationProp
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName))
 
   return (
+    <TamaguiProvider config={tamaguiConfig} >
     <NavigationContainer
       ref={navigationRef}
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
@@ -100,5 +103,6 @@ export const AppNavigator = observer(function AppNavigator(props: NavigationProp
     >
       <AppStack />
     </NavigationContainer>
+    </TamaguiProvider>
   )
 })
