@@ -1,12 +1,10 @@
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, FC, useEffect, useMemo } from "react"
 import {
-  AccessibilityProps,
   ActivityIndicator,
   Image,
   ImageSourcePropType,
   ImageStyle,
-  Platform,
   ScrollView,
   StyleSheet,
   TextStyle,
@@ -14,13 +12,7 @@ import {
   ViewStyle,
 } from "react-native"
 import { type ContentStyle } from "@shopify/flash-list"
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated"
+import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated"
 import {
   Button,
   ButtonAccessoryProps,
@@ -30,24 +22,58 @@ import {
   ListView,
   Screen,
   Text,
-} from "../components"
-import { isRTL, translate } from "../i18n"
-import { useStores } from "../models"
-import { Episode } from "../models/Episode"
-import { DemoTabScreenProps } from "../navigators/DemoNavigator"
-import { colors, spacing } from "../theme"
-import { delay } from "../utils/delay"
-import { openLinkInBrowser } from "../utils/openLinkInBrowser"
+} from "app/components"
+import { isRTL } from "app/i18n"
+import { useStores } from "app/models"
+import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
+import { colors, spacing } from "app/theme"
+import { delay } from "app/utils/delay"
 import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons"
+import { ContributionCard } from "app/screens/Project/components/ContributionCard"
+import { Project, ProjectHealthType, ProjectStatus } from "app/models/entities/project/Project"
+import { palette } from "app/theme/palette"
 
 const ICON_SIZE = 14
 
-const rnrImage1 = require("../../assets/images/demo/rnr-image-1.png")
-const rnrImage2 = require("../../assets/images/demo/rnr-image-2.png")
-const rnrImage3 = require("../../assets/images/demo/rnr-image-3.png")
+const rnrImage1 = require("assets/images/demo/rnr-image-1.png")
+const rnrImage2 = require("assets/images/demo/rnr-image-2.png")
+const rnrImage3 = require("assets/images/demo/rnr-image-3.png")
 const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 
-export const DemoPodcastListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = observer(
+const projects: Project[] = [
+  {
+    id: "",
+    name: "AWS CIRT",
+    description: "It's a beautiful life",
+    targetAmount: 80,
+    deadline: "2024-02-09T21:58:07.208Z",
+    ownerId: "",
+    status: ProjectStatus.OPEN,
+    health: ProjectHealthType.IN_PROGRESS,
+  },
+  {
+    id: "",
+    name: "Nudacy Records",
+    description: "The music is life",
+    targetAmount: 80,
+    deadline: "2024-02-09T21:58:07.208Z",
+    ownerId: "",
+    status: ProjectStatus.OPEN,
+    health: ProjectHealthType.IN_PROGRESS,
+  },
+  {
+    id: "",
+    name: "Fanilo project",
+    description: "Ho fifaliana no ameno ny tany",
+    targetAmount: 80,
+    deadline: "2024-02-09T21:58:07.208Z",
+    ownerId: "",
+    status: ProjectStatus.OPEN,
+    health: ProjectHealthType.IN_PROGRESS,
+  },
+]
+
+export const ProjectScreen: FC<DemoTabScreenProps<"Project">> = observer(
   function DemoPodcastListScreen(_props) {
     const { episodeStore } = useStores()
 
@@ -89,18 +115,11 @@ export const DemoPodcastListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = 
           </View>
           <MaterialIcon name="star-shooting" size={25} />
         </View>
-        <View style={{ height: 120 }}>
-          <ScrollView horizontal={true}>
-            <View style={{ width: 200, backgroundColor: "red", height: 100, marginHorizontal: 15 }}>
-              <Text>Item 1</Text>
-            </View>
-            <View style={{ width: 200, backgroundColor: "red", height: 100, marginHorizontal: 15 }}>
-              <Text>Item 1</Text>
-            </View>
-            <View style={{ width: 200, backgroundColor: "red", height: 100, marginHorizontal: 15 }}>
-              <Text>Item 1</Text>
-            </View>
-            {/* Add more items as needed */}
+        <View style={{ height: 150 }}>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            <ContributionCard label={"Projet Tatezana"} />
+            <ContributionCard label={"Télé feérique"} />
+            <ContributionCard label={"LEI"} />
           </ScrollView>
         </View>
         <View
@@ -109,14 +128,16 @@ export const DemoPodcastListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = 
             height: 50,
             alignItems: "center",
             flexDirection: "row",
-            paddingLeft: 25,
           }}
         >
-          <Text preset="subheading" tx="demoPodcastListScreen.title" />
+          <View style={{ justifyContent: "center", width: "34%", marginLeft: 25 }}>
+            <Text preset="subheading" text={"May interest you"} />
+          </View>
+          <MaterialIcon name="star-shooting" size={25} />
         </View>
-        <ListView<Episode>
+        <ListView<Project>
           contentContainerStyle={$listContentContainer}
-          data={episodeStore.episodesForList.slice()}
+          data={projects}
           extraData={episodeStore.favorites.length + episodeStore.episodes.length}
           refreshing={refreshing}
           estimatedItemSize={177}
@@ -145,30 +166,20 @@ export const DemoPodcastListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = 
               />
             )
           }
-          renderItem={({ item }) => (
-            <EpisodeCard
-              episode={item}
-              isFavorite={episodeStore.hasFavorite(item)}
-              onPressFavorite={() => episodeStore.toggleFavorite(item)}
-            />
-          )}
+          renderItem={({ item }) => <ProjectCard project={item} onPressContribute={() => {}} />}
         />
       </Screen>
     )
   },
 )
 
-const EpisodeCard = observer(function EpisodeCard({
-  episode,
-  isFavorite,
-  onPressFavorite,
+const ProjectCard = observer(function ProjectCard({
+  project,
+  onPressContribute,
 }: {
-  episode: Episode
-  onPressFavorite: () => void
-  isFavorite: boolean
+  project: Project
+  onPressContribute: () => void
 }) {
-  const liked = useSharedValue(isFavorite ? 1 : 0)
-
   const imageUri = useMemo<ImageSourcePropType>(() => {
     return rnrImages[Math.floor(Math.random() * rnrImages.length)]
   }, [])
@@ -178,10 +189,10 @@ const EpisodeCard = observer(function EpisodeCard({
     return {
       transform: [
         {
-          scale: interpolate(liked.value, [0, 1], [1, 0], Extrapolate.EXTEND),
+          scale: interpolate(0, [0, 1], [1, 0], Extrapolate.EXTEND),
         },
       ],
-      opacity: interpolate(liked.value, [0, 1], [1, 0], Extrapolate.CLAMP),
+      opacity: interpolate(0, [0, 1], [1, 0], Extrapolate.CLAMP),
     }
   })
 
@@ -190,10 +201,10 @@ const EpisodeCard = observer(function EpisodeCard({
     return {
       transform: [
         {
-          scale: liked.value,
+          scale: 0,
         },
       ],
-      opacity: liked.value,
+      opacity: 0,
     }
   })
 
@@ -201,40 +212,13 @@ const EpisodeCard = observer(function EpisodeCard({
    * Android has a "longpress" accessibility action. iOS does not, so we just have to use a hint.
    * @see https://reactnative.dev/docs/accessibility#accessibilityactions
    */
-  const accessibilityHintProps = useMemo(
-    () =>
-      Platform.select<AccessibilityProps>({
-        ios: {
-          accessibilityLabel: episode.title,
-          accessibilityHint: translate("demoPodcastListScreen.accessibility.cardHint", {
-            action: isFavorite ? "unfavorite" : "favorite",
-          }),
-        },
-        android: {
-          accessibilityLabel: episode.title,
-          accessibilityActions: [
-            {
-              name: "longpress",
-              label: translate("demoPodcastListScreen.accessibility.favoriteAction"),
-            },
-          ],
-          onAccessibilityAction: ({ nativeEvent }) => {
-            if (nativeEvent.actionName === "longpress") {
-              handlePressFavorite()
-            }
-          },
-        },
-      }),
-    [episode, isFavorite],
-  )
 
   const handlePressFavorite = () => {
-    onPressFavorite()
-    liked.value = withSpring(liked.value ? 0 : 1)
+    onPressContribute()
   }
 
   const handlePressCard = () => {
-    openLinkInBrowser(episode.enclosure.link)
+    // openLinkInBrowser(episode.enclosure.link)
   }
 
   const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
@@ -246,7 +230,7 @@ const EpisodeCard = observer(function EpisodeCard({
               style={[$iconContainer, StyleSheet.absoluteFill, animatedLikeButtonStyles]}
             >
               <Icon
-                icon="heart"
+                icon="community"
                 size={ICON_SIZE}
                 color={colors.palette.neutral800} // dark grey
               />
@@ -275,44 +259,23 @@ const EpisodeCard = observer(function EpisodeCard({
           <Text
             style={$metadataText}
             size="xxs"
-            accessibilityLabel={episode.datePublished.accessibilityLabel}
+            accessibilityLabel={project?.deadline ?? new Date().toISOString()}
           >
-            {episode.datePublished.textLabel}
-          </Text>
-          <Text
-            style={$metadataText}
-            size="xxs"
-            accessibilityLabel={episode.duration.accessibilityLabel}
-          >
-            {episode.duration.textLabel}
+            {project?.deadline}
           </Text>
         </View>
       }
-      content={`${episode.parsedTitleAndSubtitle.title} - ${episode.parsedTitleAndSubtitle.subtitle}`}
-      {...accessibilityHintProps}
+      content={`${project.description}`}
       RightComponent={<Image source={imageUri} style={$itemThumbnail} />}
       FooterComponent={
         <Button
           onPress={handlePressFavorite}
           onLongPress={handlePressFavorite}
-          style={[$favoriteButton, isFavorite && $unFavoriteButton]}
-          accessibilityLabel={
-            isFavorite
-              ? translate("demoPodcastListScreen.accessibility.unfavoriteIcon")
-              : translate("demoPodcastListScreen.accessibility.favoriteIcon")
-          }
+          style={[$favoriteButton]}
+          accessibilityLabel={"Contribute"}
           LeftAccessory={ButtonLeftAccessory}
         >
-          <Text
-            size="xxs"
-            accessibilityLabel={episode.duration.accessibilityLabel}
-            weight="medium"
-            text={
-              isFavorite
-                ? translate("demoPodcastListScreen.unfavoriteButton")
-                : translate("demoPodcastListScreen.favoriteButton")
-            }
-          />
+          <Text size="xxs" weight="medium" text={"Contribute"} style={{ color: palette.black }} />
         </Button>
       }
     />
@@ -364,18 +327,13 @@ const $favoriteButton: ViewStyle = {
   borderRadius: 17,
   marginTop: spacing.md,
   justifyContent: "flex-start",
-  backgroundColor: colors.palette.neutral300,
+  backgroundColor: palette.secondary,
   borderColor: colors.palette.neutral300,
   paddingHorizontal: spacing.md,
   paddingTop: spacing.xxxs,
   paddingBottom: 0,
   minHeight: 32,
   alignSelf: "flex-start",
-}
-
-const $unFavoriteButton: ViewStyle = {
-  borderColor: colors.palette.primary100,
-  backgroundColor: colors.palette.primary100,
 }
 
 const $emptyState: ViewStyle = {

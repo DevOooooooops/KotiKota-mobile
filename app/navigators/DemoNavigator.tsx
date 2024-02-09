@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Icon } from "../components"
 import { translate } from "../i18n"
 import { DemoCommunityScreen, Drawer, DemoDebugScreen } from "../screens"
-import { DemoPodcastListScreen } from "../screens/DemoPodcastListScreen"
+import { ProjectScreen } from "../screens/Project/ProjectScreen"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 import FeatherIcon from "react-native-vector-icons/Feather"
@@ -16,7 +16,7 @@ export type DemoTabParamList = {
   DemoCommunity: undefined
   DemoShowroom: { queryIndex?: string; itemIndex?: string }
   DemoDebug: undefined
-  DemoPodcastList: undefined
+  Project: undefined
 }
 
 /**
@@ -77,8 +77,8 @@ export function DemoNavigator() {
       />
 
       <Tab.Screen
-        name="DemoPodcastList"
-        component={DemoPodcastListScreen}
+        name="Project"
+        component={ProjectScreen}
         options={{
           tabBarAccessibilityLabel: "Projects",
           tabBarLabel: "Projects",
