@@ -1,0 +1,23 @@
+{
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parserOptions": {
+        "sourceType": "module"
+      },
+      "rules": {
+        "@typescript-eslint/no-shadow": ["error"],
+        "no-shadow": "off",
+        "no-undef": "off",
+        "import/prefer-default-export": "off",
+        "react/no-unescaped-entities": "off",
+        "max-len": ["error", { "code": 160 }],
+        "react-native/no-inline-styles": "off",
+        "react-hooks/rules-of-hooks": "off",
+        "react/prop-types": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "react/no-unstable-nested-components": "off"
+      }
+    }
+  ]
+}
