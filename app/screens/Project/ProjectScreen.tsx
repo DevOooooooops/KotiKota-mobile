@@ -80,6 +80,7 @@ export const ProjectScreen: FC<DemoTabScreenProps<"Project">> = observer(
 
     const [refreshing, setRefreshing] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
+    const [open, setOpen] = React.useState(false)
 
     // initially, kick off a background refresh without the refreshing UI
     useEffect(() => {
@@ -167,10 +168,12 @@ export const ProjectScreen: FC<DemoTabScreenProps<"Project">> = observer(
               />
             )
           }
-          renderItem={({ item }) => <ProjectCard project={item} onPressContribute={() => {}} />}
+          renderItem={({ item }) => (
+            <ProjectCard project={item} onPressContribute={() => setOpen(true)} />
+          )}
         />
         <View>
-          <DonationModal />
+          <DonationModal open={open} setOpen={setOpen} />
         </View>
       </Screen>
     )

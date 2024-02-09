@@ -32,8 +32,8 @@ export const InputField = ({
         keyboardType={keyboardType ?? "default"}
         autoCapitalize="none"
         label={text}
-        textColor={palette.deepPink}
-        selectionColor={palette.deepPink}
+        textColor={palette.primary}
+        selectionColor={palette.primary}
         value={value}
         onChangeText={onChange}
         error={error}
@@ -43,7 +43,7 @@ export const InputField = ({
               text={rightText}
               textStyle={{
                 fontSize: 16,
-                color: palette.deepPink,
+                color: palette.primary,
                 fontFamily: "Geometria-Bold",
               }}
             />
@@ -55,11 +55,11 @@ export const InputField = ({
           width: width,
           elevation: 5,
           borderBottomWidth: error ? 2 : 0,
-          borderBottomColor: error ? palette.pastelRed : palette.greyDarker,
+          borderBottomColor: error ? palette.pastelRed : palette.primary,
         }}
         theme={{
           colors: {
-            primary: palette.deepPink,
+            primary: palette.primary,
           },
         }}
       />

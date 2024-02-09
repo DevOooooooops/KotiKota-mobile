@@ -1,13 +1,18 @@
-import { Adapt, Button, Dialog, Sheet, Unspaced, XStack, Input, TextArea, Ystack } from "tamagui"
-import { X } from "@tamagui/lucide-icons"
+import { Adapt, Button, Dialog, Sheet, XStack } from "tamagui"
 import { View } from "react-native"
 import { palette } from "app/theme/palette"
 import { Avatar } from "app/components/Avatar/Avatar"
 import React from "react"
 import { Text } from "app/components"
-import { Controller, useForm } from "react-hook-form"
+import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { InputField } from "app/components/InputField/InputField"
-export function DonationModal() {
+
+interface DonationModalProps {
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const DonationModal = ({ open, setOpen }: DonationModalProps) => {
   const {
     handleSubmit,
     control,
@@ -17,14 +22,13 @@ export function DonationModal() {
     defaultValues: { amount: "" },
   })
 
-  const onDonate = (amout) => {}
+  const onDonate: SubmitHandler<{ amount: string }> = (amount) => {
+    console.tron.log(amount)
+    setOpen(false)
+  }
 
   return (
-    <Dialog modal>
-      <Dialog.Trigger asChild>
-        <Button>Show Dialog</Button>
-      </Dialog.Trigger>
-
+    <Dialog modal open={open}>
       <Adapt when="sm" platform="touch">
         <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>
           <Sheet.Frame padding="$4" gap="$4">
@@ -117,44 +121,56 @@ export function DonationModal() {
             <Text preset="formLabel" text={"Numer Madagascar"} style={{ color: palette.black }} />
           </View>
 
-          <View style={{ width: "100%", height: 200, backgroundColor: palette.greyDarker }}>
-            <Controller
-              control={control}
-              name="amount"
-              rules={{
-                validate: {
-                  isValidNumber: (value) => {
-                    const intValue = parseInt(value, 10)
-                    return !isNaN(intValue)
+          <View
+            style={{
+              width: "100%",
+              height: 120,
+              justifyContent: "center",
+              flexDirection: "column",
+              paddingLeft: 40,
+            }}
+          >
+            <View style={{ marginBottom: 2 }}>
+              <Text preset="default" text={"Ariary"} style={{ color: palette.primary }} />
+            </View>
+            <View>
+              <Controller
+                control={control}
+                name="amount"
+                rules={{
+                  validate: {
+                    isValidNumber: (value) => {
+                      const intValue = parseInt(value, 10)
+                      return !isNaN(intValue)
+                    },
                   },
-                },
-              }}
-              render={({ field: { onChange, value } }) => (
-                <InputField
-                  text={"Amount"}
-                  error={!!errors.amount}
-                  value={value}
-                  onChange={onChange}
-                  backgroundColor={palette.white}
-                  width={250}
-                />
-              )}
-            />
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <InputField
+                    text={"Amount"}
+                    error={!!errors.amount}
+                    value={value}
+                    onChange={onChange}
+                    backgroundColor={palette.lighterGrey}
+                    width={300}
+                  />
+                )}
+              />
+            </View>
           </View>
 
           <XStack alignSelf="flex-end" gap="$4">
             <Dialog.Close displayWhenAdapted asChild>
-              <Button theme="active" aria-label="Close">
-                Save changes
+              <Button
+                style={{ backgroundColor: palette.primary }}
+                theme="active"
+                aria-label="Close"
+                onPress={handleSubmit(onDonate)}
+              >
+                Donate
               </Button>
             </Dialog.Close>
           </XStack>
-
-          <Unspaced>
-            <Dialog.Close asChild>
-              <Button position="absolute" top="$3" right="$3" size="$2" circular icon={X} />
-            </Dialog.Close>
-          </Unspaced>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog>
