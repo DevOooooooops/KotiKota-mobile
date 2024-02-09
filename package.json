@@ -39,6 +39,7 @@
     "@shopify/flash-list": "1.4.3",
     "@tamagui/babel-plugin": "^1.89.18",
     "@tamagui/config": "^1.89.18",
+    "@tamagui/lucide-icons": "^1.89.19",
     "@tamagui/metro-plugin": "^1.89.18",
     "apisauce": "3.0.1",
     "date-fns": "^2.30.0",
@@ -64,6 +65,7 @@
     "react-native-reanimated": "~3.3.0",
     "react-native-safe-area-context": "4.6.3",
     "react-native-screens": "~3.22.0",
+    "react-native-svg": "^14.1.0",
     "react-native-web": "~0.19.6",
     "tamagui": "^1.89.18"
   },

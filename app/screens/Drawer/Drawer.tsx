@@ -1,6 +1,6 @@
 import { Link, RouteProp, useRoute } from "@react-navigation/native"
 import React, { FC, ReactElement, useEffect, useRef, useState } from "react"
-import { Image, ImageStyle, Platform, SectionList, TextStyle, View, ViewStyle } from "react-native"
+import { Image, ImageStyle, Platform, SectionList, View, ViewStyle } from "react-native"
 import { Drawer as DrawerLayout } from "react-native-drawer-layout"
 import { type ContentStyle } from "@shopify/flash-list"
 import { ListItem, ListView, ListViewRef, Screen, Text } from "app/components"
@@ -121,23 +121,6 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
     toggleDrawer()
   }
 
-  const scrollToIndexFailed = (info: {
-    index: number
-    highestMeasuredFrameIndex: number
-    averageItemLength: number
-  }) => {
-    listRef.current?.getScrollResponder()?.scrollToEnd()
-    timeout.current = setTimeout(
-      () =>
-        listRef.current?.scrollToLocation({
-          animated: true,
-          itemIndex: info.index,
-          sectionIndex: 0,
-        }),
-      50,
-    )
-  }
-
   useEffect(() => {
     return () => timeout.current && clearTimeout(timeout.current)
   }, [])
@@ -225,32 +208,27 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
       )}
     >
       <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContainer}>
-        <DrawerIconButton onPress={toggleDrawer} />
-
-        <SectionList
-          ref={listRef}
-          contentContainerStyle={$sectionListContentContainer}
-          stickySectionHeadersEnabled={false}
-          sections={Object.values(Demos)}
-          renderItem={({ item }) => item}
-          renderSectionFooter={() => <View style={$demoUseCasesSpacer} />}
-          ListHeaderComponent={
-            <View style={$heading}>
-              <Text preset="heading" tx="demoShowroomScreen.jumpStart" />
-            </View>
-          }
-          onScrollToIndexFailed={scrollToIndexFailed}
-          renderSectionHeader={({ section }) => {
-            return (
-              <View>
-                <Text preset="heading" style={$demoItemName}>
-                  {section.name}
-                </Text>
-                <Text style={$demoItemDescription}>{section.description}</Text>
-              </View>
-            )
+        <View
+          style={{
+            height: 60,
+            width: "100%",
+            borderBottomWidth: 3,
+            borderColor: palette.lighterGrey,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingRight: 20,
           }}
-        />
+        >
+          <View>
+            <KKText
+              style={{ fontSize: 16, color: palette.black, fontWeight: "bold" }}
+              text={"Calendar"}
+            />
+          </View>
+          <View style={{ position: "absolute", right: 15 }}>
+            <DrawerIconButton onPress={toggleDrawer} />
+          </View>
+        </View>
       </Screen>
     </DrawerLayout>
   )
@@ -269,14 +247,6 @@ const $listContentContainer: ContentStyle = {
   paddingHorizontal: spacing.lg,
 }
 
-const $sectionListContentContainer: ViewStyle = {
-  paddingHorizontal: spacing.lg,
-}
-
-const $heading: ViewStyle = {
-  marginBottom: spacing.xxxl,
-}
-
 const $logoImage: ImageStyle = {
   height: 42,
   width: 77,
@@ -285,17 +255,4 @@ const $logoImage: ImageStyle = {
 const $menuContainer: ViewStyle = {
   paddingBottom: spacing.xs,
   paddingTop: spacing.lg,
-}
-
-const $demoItemName: TextStyle = {
-  fontSize: 24,
-  marginBottom: spacing.md,
-}
-
-const $demoItemDescription: TextStyle = {
-  marginBottom: spacing.xxl,
-}
-
-const $demoUseCasesSpacer: ViewStyle = {
-  paddingBottom: spacing.xxl,
 }
