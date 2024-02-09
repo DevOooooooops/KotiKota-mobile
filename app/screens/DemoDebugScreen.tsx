@@ -1,150 +1,87 @@
-import React, { FC } from "react"
-import * as Application from "expo-application"
-import { Linking, Platform, TextStyle, View, ViewStyle } from "react-native"
-import { Button, ListItem, Screen, Text } from "../components"
+import React, { FC, useEffect, useRef } from "react"
+import { SectionList, TextStyle, View, ViewStyle } from "react-native"
+import { Screen, Text } from "../components"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
-import { colors, spacing } from "../theme"
-import { isRTL } from "../i18n"
-import { useStores } from "../models"
-
-function openLinkInBrowser(url: string) {
-  Linking.canOpenURL(url).then((canOpen) => canOpen && Linking.openURL(url))
-}
+import { spacing } from "../theme"
+import * as Demos from "app/screens/Drawer/demos"
 
 export const DemoDebugScreen: FC<DemoTabScreenProps<"DemoDebug">> = function DemoDebugScreen(
   _props,
 ) {
-  const {
-    authenticationStore: { logout },
-  } = useStores()
+  const timeout = useRef<ReturnType<typeof setTimeout>>()
+  const listRef = useRef<SectionList>(null)
 
-  const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
-  // @ts-expect-error
-  const usingFabric = global.nativeFabricUIManager != null
+  const scrollToIndexFailed = (info: {
+    index: number
+    highestMeasuredFrameIndex: number
+    averageItemLength: number
+  }) => {
+    listRef.current?.getScrollResponder()?.scrollToEnd()
+    timeout.current = setTimeout(
+      () =>
+        listRef.current?.scrollToLocation({
+          animated: true,
+          itemIndex: info.index,
+          sectionIndex: 0,
+        }),
+      50,
+    )
+  }
 
-  const demoReactotron = React.useMemo(
-    () => async () => {
-      if (__DEV__) {
-        console.tron.display({
-          name: "DISPLAY",
-          value: {
-            appId: Application.applicationId,
-            appName: Application.applicationName,
-            appVersion: Application.nativeApplicationVersion,
-            appBuildVersion: Application.nativeBuildVersion,
-            hermesEnabled: usingHermes,
-          },
-          important: true,
-        })
-      }
-    },
-    [],
-  )
+  useEffect(() => {
+    return () => timeout.current && clearTimeout(timeout.current)
+  }, [])
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
-      <Text
-        style={$reportBugsLink}
-        tx="demoDebugScreen.reportBugs"
-        onPress={() => openLinkInBrowser("https://github.com/infinitered/ignite/issues")}
+    <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContainer}>
+      <SectionList
+        ref={listRef}
+        contentContainerStyle={$sectionListContentContainer}
+        stickySectionHeadersEnabled={false}
+        sections={Object.values(Demos)}
+        renderItem={({ item }) => item}
+        renderSectionFooter={() => <View style={$demoUseCasesSpacer} />}
+        ListHeaderComponent={
+          <View style={$heading}>
+            <Text preset="heading" tx="demoShowroomScreen.jumpStart" />
+          </View>
+        }
+        onScrollToIndexFailed={scrollToIndexFailed}
+        renderSectionHeader={({ section }) => {
+          return (
+            <View>
+              <Text preset="heading" style={$demoItemName}>
+                {section.name}
+              </Text>
+              <Text style={$demoItemDescription}>{section.description}</Text>
+            </View>
+          )
+        }}
       />
-      <Text style={$title} preset="heading" tx="demoDebugScreen.title" />
-      <View style={$itemsContainer}>
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Id</Text>
-              <Text>{Application.applicationId}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Name</Text>
-              <Text>{Application.applicationName}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Version</Text>
-              <Text>{Application.nativeApplicationVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Build Version</Text>
-              <Text>{Application.nativeBuildVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">Hermes Enabled</Text>
-              <Text>{String(usingHermes)}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">Fabric Enabled</Text>
-              <Text>{String(usingFabric)}</Text>
-            </View>
-          }
-        />
-      </View>
-      <View style={$buttonContainer}>
-        <Button style={$button} tx="demoDebugScreen.reactotron" onPress={demoReactotron} />
-        <Text style={$hint} tx={`demoDebugScreen.${Platform.OS}ReactotronHint` as const} />
-      </View>
-      <View style={$buttonContainer}>
-        <Button style={$button} tx="common.logOut" onPress={logout} />
-      </View>
     </Screen>
   )
 }
+const $screenContainer: ViewStyle = {
+  flex: 1,
+}
 
-const $container: ViewStyle = {
-  paddingTop: spacing.lg + spacing.xl,
-  paddingBottom: spacing.xxl,
+const $sectionListContentContainer: ViewStyle = {
   paddingHorizontal: spacing.lg,
 }
 
-const $title: TextStyle = {
+const $heading: ViewStyle = {
+  marginBottom: spacing.xxxl,
+}
+
+const $demoItemName: TextStyle = {
+  fontSize: 24,
+  marginBottom: spacing.md,
+}
+
+const $demoItemDescription: TextStyle = {
   marginBottom: spacing.xxl,
 }
 
-const $reportBugsLink: TextStyle = {
-  color: colors.tint,
-  marginBottom: spacing.lg,
-  alignSelf: isRTL ? "flex-start" : "flex-end",
-}
-
-const $item: ViewStyle = {
-  marginBottom: spacing.md,
-}
-
-const $itemsContainer: ViewStyle = {
-  marginBottom: spacing.xl,
-}
-
-const $button: ViewStyle = {
-  marginBottom: spacing.xs,
-}
-
-const $buttonContainer: ViewStyle = {
-  marginBottom: spacing.md,
-}
-
-const $hint: TextStyle = {
-  color: colors.palette.neutral600,
-  fontSize: 12,
-  lineHeight: 15,
-  paddingBottom: spacing.lg,
+const $demoUseCasesSpacer: ViewStyle = {
+  paddingBottom: spacing.xxl,
 }
