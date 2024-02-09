@@ -16,12 +16,12 @@ import React from "react"
 import { useColorScheme } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
-import { useStores } from "../models"
+// import { useStores } from "../models"
 import { DemoNavigator, DemoTabParamList } from "./DemoNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
-import { TamaguiProvider } from 'tamagui';
-import { tamaguiConfig } from 'tamagui.config';
+import { TamaguiProvider } from "tamagui"
+import { tamaguiConfig } from "tamagui.config"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -59,9 +59,7 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
-  const {
-    authenticationStore: { isAuthenticated },
-  } = useStores()
+  const isAuthenticated = true
 
   return (
     <Stack.Navigator
@@ -95,14 +93,14 @@ export const AppNavigator = observer(function AppNavigator(props: NavigationProp
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName))
 
   return (
-    <TamaguiProvider config={tamaguiConfig} >
-    <NavigationContainer
-      ref={navigationRef}
-      theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-      {...props}
-    >
-      <AppStack />
-    </NavigationContainer>
+    <TamaguiProvider config={tamaguiConfig}>
+      <NavigationContainer
+        ref={navigationRef}
+        theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        {...props}
+      >
+        <AppStack />
+      </NavigationContainer>
     </TamaguiProvider>
   )
 })
