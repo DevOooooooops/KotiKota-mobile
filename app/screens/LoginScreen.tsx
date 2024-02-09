@@ -1,144 +1,199 @@
 import { observer } from "mobx-react-lite"
-import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, ViewStyle } from "react-native"
-import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
-import { useStores } from "../models"
-import { AppStackScreenProps } from "../navigators"
-import { colors, spacing } from "../theme"
+import React, { FC } from "react"
+import { TouchableOpacity, View } from "react-native"
+import { AppStackScreenProps, navigate } from "app/navigators"
+import { Avatar } from "app/components/Avatar/Avatar"
+import { ErrorBoundary } from "app/screens"
+import { CQText } from "app/components/Text/CQText"
+import { palette } from "app/theme/palette"
+import { InputField } from "app/components/InputField/InputField"
+import { PasswordInputField } from "app/components/InputField/PasswordInputField"
+import { Controller, useForm } from "react-hook-form"
+import IoniconIcon from "react-native-vector-icons/Ionicons"
+import FontAwesomeIcon from "react-native-vector-icons/FontAwesome"
+import { useStores } from "app/models"
 
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
+interface LoginData {
+  username: string
+  password: string
+}
+
 export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_props) {
-  const authPasswordInput = useRef<TextInput>(null)
-
-  const [authPassword, setAuthPassword] = useState("")
-  const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [attemptsCount, setAttemptsCount] = useState(0)
+  const { authStore } = useStores()
   const {
-    authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError },
-  } = useStores()
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<LoginData>({
+    mode: "all",
+    defaultValues: { username: "", password: "" },
+  })
 
-  useEffect(() => {
-    // Here is where you could fetch credentials from keychain or storage
-    // and pre-fill the form fields.
-    setAuthEmail("ignite@infinite.red")
-    setAuthPassword("ign1teIsAwes0m3")
-
-    // Return a "cleanup" function that React will run when the component unmounts
-    return () => {
-      setAuthPassword("")
-      setAuthEmail("")
-    }
-  }, [])
-
-  const error = isSubmitted ? validationError : ""
-
-  function login() {
-    setIsSubmitted(true)
-    setAttemptsCount(attemptsCount + 1)
-
-    if (validationError) return
-
-    // Make a request to your server to get an authentication token.
-    // If successful, reset the fields and set the token.
-    setIsSubmitted(false)
-    setAuthPassword("")
-    setAuthEmail("")
-
-    // We'll mock this with a fake token.
-    setAuthToken(String(Date.now()))
+  const onSubmit = async (loginData: LoginData) => {
+    console.tron.log(loginData)
+    await authStore.login(loginData.username, loginData.password)
   }
 
-  const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
-    () =>
-      function PasswordRightAccessory(props: TextFieldAccessoryProps) {
-        return (
-          <Icon
-            icon={isAuthPasswordHidden ? "view" : "hidden"}
-            color={colors.palette.neutral800}
-            containerStyle={props.style}
-            size={20}
-            onPress={() => setIsAuthPasswordHidden(!isAuthPasswordHidden)}
-          />
-        )
-      },
-    [isAuthPasswordHidden],
-  )
-
   return (
-    <Screen
-      preset="auto"
-      contentContainerStyle={$screenContentContainer}
-      safeAreaEdges={["top", "bottom"]}
-    >
-      <Text testID="login-heading" tx="loginScreen.signIn" preset="heading" style={$signIn} />
-      <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails} />
-      {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}
-
-      <TextField
-        value={authEmail}
-        onChangeText={setAuthEmail}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        labelTx="loginScreen.emailFieldLabel"
-        placeholderTx="loginScreen.emailFieldPlaceholder"
-        helper={error}
-        status={error ? "error" : undefined}
-        onSubmitEditing={() => authPasswordInput.current?.focus()}
-      />
-
-      <TextField
-        ref={authPasswordInput}
-        value={authPassword}
-        onChangeText={setAuthPassword}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        labelTx="loginScreen.passwordFieldLabel"
-        placeholderTx="loginScreen.passwordFieldPlaceholder"
-        onSubmitEditing={login}
-        RightAccessory={PasswordRightAccessory}
-      />
-
-      <Button
-        testID="login-button"
-        tx="loginScreen.tapToSignIn"
-        style={$tapButton}
-        preset="reversed"
-        onPress={login}
-      />
-    </Screen>
+    <ErrorBoundary catchErrors="always">
+      {/*<Avatar
+        source={require("assets/images/authentication.png")}
+        resizeMode="stretch"
+        resizeMethod="auto"
+        style={{ height: "100%", width: "100%", position: "absolute" }}
+      />*/}
+      <View
+        style={{ height: 170, width: "100%", alignItems: "center", justifyContent: "flex-end" }}
+      >
+        <CQText
+          style={{ fontSize: 50, color: palette.black, fontWeight: "bold" }}
+          text={"Sign In"}
+        ></CQText>
+      </View>
+      <View
+        style={{
+          height: 200,
+          width: "100%",
+          backgroundColor: palette.white,
+          alignItems: "center",
+          marginTop: 150,
+        }}
+      >
+        <View
+          style={{
+            marginVertical: 10,
+            width: "70%",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
+            <FontAwesomeIcon name="user-o" size={33} color={palette.deepPink} />
+          </View>
+          <Controller
+            control={control}
+            name="username"
+            defaultValue=""
+            render={({ field: { onChange, value } }) => (
+              <InputField
+                text={"Username"}
+                error={!!errors.username}
+                value={value}
+                onChange={onChange}
+                backgroundColor={palette.white}
+                width={250}
+              />
+            )}
+          />
+        </View>
+        <View
+          style={{
+            marginVertical: 10,
+            width: "70%",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
+            <IoniconIcon name="lock-closed-outline" size={35} color={palette.deepPink} />
+          </View>
+          <Controller
+            control={control}
+            name="password"
+            defaultValue=""
+            render={({ field: { onChange, value } }) => (
+              <PasswordInputField
+                text={"Password"}
+                error={!!errors.password}
+                value={value}
+                onChange={onChange}
+                backgroundColor={palette.white}
+                width={250}
+              />
+            )}
+          />
+        </View>
+        <View style={{ width: "100%", justifyContent: "center", alignItems: "flex-end" }}>
+          <TouchableOpacity
+            style={{
+              width: 200,
+              height: 40,
+              borderRadius: 5,
+              justifyContent: "center",
+              alignItems: "flex-end",
+              marginRight: 50,
+            }}
+            onPress={() => navigate("Registration")}
+          >
+            <CQText
+              style={{
+                color: palette.black,
+                fontSize: 16,
+                textDecorationLine: "underline",
+              }}
+              text={"Don't have an account? "}
+            />
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            marginVertical: 20,
+            width: "100%",
+            height: 50,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              backgroundColor: palette.deepPink,
+              width: 150,
+              height: 40,
+              borderRadius: 5,
+              justifyContent: "center",
+              flexDirection: "row",
+            }}
+            onPress={handleSubmit(onSubmit)}
+          >
+            <View style={{ justifyContent: "center" }}>
+              <CQText
+                style={{
+                  color: palette.white,
+                  fontSize: 16,
+                }}
+                text={"Connect"}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View
+        style={{
+          width: "100%",
+          height: 100,
+          position: "absolute",
+          bottom: 0,
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "row",
+        }}
+      >
+        <CQText
+          style={{
+            color: palette.black,
+            fontSize: 30,
+          }}
+          text={"CashQuest"}
+        />
+        <Avatar
+          source={require("assets/images/cash-quest-logo.png")}
+          resizeMode="stretch"
+          resizeMethod="auto"
+          style={{ height: 50, width: 50, marginLeft: 10 }}
+        />
+      </View>
+    </ErrorBoundary>
   )
 })
-
-const $screenContentContainer: ViewStyle = {
-  paddingVertical: spacing.xxl,
-  paddingHorizontal: spacing.lg,
-}
-
-const $signIn: TextStyle = {
-  marginBottom: spacing.sm,
-}
-
-const $enterDetails: TextStyle = {
-  marginBottom: spacing.lg,
-}
-
-const $hint: TextStyle = {
-  color: colors.tint,
-  marginBottom: spacing.md,
-}
-
-const $textField: ViewStyle = {
-  marginBottom: spacing.lg,
-}
-
-const $tapButton: ViewStyle = {
-  marginTop: spacing.xs,
-}
