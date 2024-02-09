@@ -32,6 +32,7 @@ import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons"
 import { ContributionCard } from "app/screens/Project/components/ContributionCard"
 import { Project, ProjectHealthType, ProjectStatus } from "app/models/entities/project/Project"
 import { palette } from "app/theme/palette"
+import { DonationModal } from "app/screens/Project/components/DonationModal"
 
 const ICON_SIZE = 14
 
@@ -168,6 +169,9 @@ export const ProjectScreen: FC<DemoTabScreenProps<"Project">> = observer(
           }
           renderItem={({ item }) => <ProjectCard project={item} onPressContribute={() => {}} />}
         />
+        <View>
+          <DonationModal />
+        </View>
       </Screen>
     )
   },
@@ -272,10 +276,10 @@ const ProjectCard = observer(function ProjectCard({
           onPress={handlePressFavorite}
           onLongPress={handlePressFavorite}
           style={[$favoriteButton]}
-          accessibilityLabel={"Contribute"}
+          accessibilityLabel={"Donate"}
           LeftAccessory={ButtonLeftAccessory}
         >
-          <Text size="xxs" weight="medium" text={"Contribute"} style={{ color: palette.black }} />
+          <Text size="xxs" weight="medium" text={"Donate"} style={{ color: palette.black }} />
         </Button>
       }
     />
