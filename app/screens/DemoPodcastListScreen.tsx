@@ -7,6 +7,7 @@ import {
   ImageSourcePropType,
   ImageStyle,
   Platform,
+  ScrollView,
   StyleSheet,
   TextStyle,
   View,
@@ -29,7 +30,6 @@ import {
   ListView,
   Screen,
   Text,
-  Toggle,
 } from "../components"
 import { isRTL, translate } from "../i18n"
 import { useStores } from "../models"
@@ -38,6 +38,7 @@ import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { colors, spacing } from "../theme"
 import { delay } from "../utils/delay"
 import { openLinkInBrowser } from "../utils/openLinkInBrowser"
+import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons"
 
 const ICON_SIZE = 14
 
@@ -75,6 +76,44 @@ export const DemoPodcastListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = 
         safeAreaEdges={["top"]}
         contentContainerStyle={$screenContentContainer}
       >
+        <View
+          style={{
+            width: "100%",
+            height: 50,
+            alignItems: "center",
+            flexDirection: "row",
+          }}
+        >
+          <View style={{ justifyContent: "center", width: "34%", marginLeft: 25 }}>
+            <Text preset="subheading" text={"Contribution"} />
+          </View>
+          <MaterialIcon name="star-shooting" size={25} />
+        </View>
+        <View style={{ height: 120 }}>
+          <ScrollView horizontal={true}>
+            <View style={{ width: 200, backgroundColor: "red", height: 100, marginHorizontal: 15 }}>
+              <Text>Item 1</Text>
+            </View>
+            <View style={{ width: 200, backgroundColor: "red", height: 100, marginHorizontal: 15 }}>
+              <Text>Item 1</Text>
+            </View>
+            <View style={{ width: 200, backgroundColor: "red", height: 100, marginHorizontal: 15 }}>
+              <Text>Item 1</Text>
+            </View>
+            {/* Add more items as needed */}
+          </ScrollView>
+        </View>
+        <View
+          style={{
+            width: "100%",
+            height: 50,
+            alignItems: "center",
+            flexDirection: "row",
+            paddingLeft: 25,
+          }}
+        >
+          <Text preset="subheading" tx="demoPodcastListScreen.title" />
+        </View>
         <ListView<Episode>
           contentContainerStyle={$listContentContainer}
           data={episodeStore.episodesForList.slice()}
@@ -105,26 +144,6 @@ export const DemoPodcastListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = 
                 ImageProps={{ resizeMode: "contain" }}
               />
             )
-          }
-          ListHeaderComponent={
-            <View style={$heading}>
-              <Text preset="heading" tx="demoPodcastListScreen.title" />
-              {(episodeStore.favoritesOnly || episodeStore.episodesForList.length > 0) && (
-                <View style={$toggle}>
-                  <Toggle
-                    value={episodeStore.favoritesOnly}
-                    onValueChange={() =>
-                      episodeStore.setProp("favoritesOnly", !episodeStore.favoritesOnly)
-                    }
-                    variant="switch"
-                    labelTx="demoPodcastListScreen.onlyFavorites"
-                    labelPosition="left"
-                    labelStyle={$labelStyle}
-                    accessibilityLabel={translate("demoPodcastListScreen.accessibility.switch")}
-                  />
-                </View>
-              )}
-            </View>
           }
           renderItem={({ item }) => (
             <EpisodeCard
@@ -307,12 +326,8 @@ const $screenContentContainer: ViewStyle = {
 
 const $listContentContainer: ContentStyle = {
   paddingHorizontal: spacing.lg,
-  paddingTop: spacing.lg + spacing.xl,
+  paddingTop: 5,
   paddingBottom: spacing.lg,
-}
-
-const $heading: ViewStyle = {
-  marginBottom: spacing.md,
 }
 
 const $item: ViewStyle = {
@@ -326,15 +341,6 @@ const $itemThumbnail: ImageStyle = {
   borderRadius: 50,
   alignSelf: "flex-start",
 }
-
-const $toggle: ViewStyle = {
-  marginTop: spacing.md,
-}
-
-const $labelStyle: TextStyle = {
-  textAlign: "left",
-}
-
 const $iconContainer: ViewStyle = {
   height: ICON_SIZE,
   width: ICON_SIZE,
