@@ -4,10 +4,10 @@ import { TouchableOpacity, View } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
 import { Avatar } from "app/components/Avatar/Avatar"
 import { ErrorBoundary } from "app/screens"
-import { CQText } from "app/components/Text/CQText"
+import { KKText } from "app/components/Text/KKText"
 import { palette } from "app/theme/palette"
 import { InputField } from "app/components/InputField/InputField"
-import { PasswordInputField } from "app/components/InputField/PasswordInputField"
+import { InputFieldPassword } from "app/components/InputField/InputFieldPassword"
 import { Controller, useForm } from "react-hook-form"
 import IoniconIcon from "react-native-vector-icons/Ionicons"
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome"
@@ -47,10 +47,10 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
       <View
         style={{ height: 170, width: "100%", alignItems: "center", justifyContent: "flex-end" }}
       >
-        <CQText
+        <KKText
           style={{ fontSize: 50, color: palette.black, fontWeight: "bold" }}
           text={"Sign In"}
-        ></CQText>
+        ></KKText>
       </View>
       <View
         style={{
@@ -104,7 +104,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
             name="password"
             defaultValue=""
             render={({ field: { onChange, value } }) => (
-              <PasswordInputField
+              <InputFieldPassword
                 text={"Password"}
                 error={!!errors.password}
                 value={value}
@@ -127,7 +127,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
             }}
             onPress={() => navigate("Registration")}
           >
-            <CQText
+            <KKText
               style={{
                 color: palette.black,
                 fontSize: 16,
@@ -158,7 +158,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
             onPress={handleSubmit(onSubmit)}
           >
             <View style={{ justifyContent: "center" }}>
-              <CQText
+              <KKText
                 style={{
                   color: palette.white,
                   fontSize: 16,
@@ -180,7 +180,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
           flexDirection: "row",
         }}
       >
-        <CQText
+        <KKText
           style={{
             color: palette.black,
             fontSize: 30,
