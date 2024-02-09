@@ -9,6 +9,8 @@ import { DemoCommunityScreen, Drawer, DemoDebugScreen } from "../screens"
 import { DemoPodcastListScreen } from "../screens/DemoPodcastListScreen"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
+import FeatherIcon from "react-native-vector-icons/Feather"
+import { palette } from "app/theme/palette"
 
 export type DemoTabParamList = {
   DemoCommunity: undefined
@@ -38,8 +40,8 @@ export function DemoNavigator() {
         headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarStyle: [$tabBar, { height: bottom + 70 }],
-        tabBarActiveTintColor: colors.text,
-        tabBarInactiveTintColor: colors.text,
+        tabBarActiveTintColor: palette.primary,
+        tabBarInactiveTintColor: palette.lightGrey,
         tabBarLabelStyle: $tabBarLabel,
         tabBarItemStyle: $tabBarItem,
       }}
@@ -50,7 +52,11 @@ export function DemoNavigator() {
         options={{
           tabBarLabel: translate("demoNavigator.componentsTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="components" color={focused ? colors.tint : undefined} size={30} />
+            <Icon
+              icon="components"
+              color={focused ? palette.primary : palette.lightGrey}
+              size={30}
+            />
           ),
         }}
       />
@@ -61,7 +67,11 @@ export function DemoNavigator() {
         options={{
           tabBarLabel: translate("demoNavigator.communityTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="community" color={focused ? colors.tint : undefined} size={30} />
+            <Icon
+              icon="community"
+              color={focused ? palette.primary : palette.lightGrey}
+              size={30}
+            />
           ),
         }}
       />
@@ -70,10 +80,14 @@ export function DemoNavigator() {
         name="DemoPodcastList"
         component={DemoPodcastListScreen}
         options={{
-          tabBarAccessibilityLabel: translate("demoNavigator.podcastListTab"),
-          tabBarLabel: translate("demoNavigator.podcastListTab"),
+          tabBarAccessibilityLabel: "Projects",
+          tabBarLabel: "Projects",
           tabBarIcon: ({ focused }) => (
-            <Icon icon="podcast" color={focused ? colors.tint : undefined} size={30} />
+            <FeatherIcon
+              name="server"
+              size={25}
+              color={focused ? palette.primary : palette.lightGrey}
+            />
           ),
         }}
       />
@@ -84,7 +98,7 @@ export function DemoNavigator() {
         options={{
           tabBarLabel: translate("demoNavigator.debugTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="debug" color={focused ? colors.tint : undefined} size={30} />
+            <Icon icon="debug" color={focused ? palette.primary : palette.lightGrey} size={30} />
           ),
         }}
       />
