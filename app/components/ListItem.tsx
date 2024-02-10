@@ -88,7 +88,7 @@ export interface ListItemProps extends TouchableOpacityProps {
   LeftComponent?: ReactElement
 }
 
-interface ListItemActionProps {
+export interface ListItemActionProps {
   icon?: IconTypes
   iconColor?: string
   Component?: ReactElement

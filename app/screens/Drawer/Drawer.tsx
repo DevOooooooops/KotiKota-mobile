@@ -1,17 +1,8 @@
-import { Link, RouteProp, useRoute } from "@react-navigation/native"
+import { RouteProp, useRoute } from "@react-navigation/native"
 import React, { FC, ReactElement, useEffect, useRef, useState } from "react"
-import {
-  Image,
-  ImageStyle,
-  Platform,
-  SectionList,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native"
+import { Image, ImageStyle, SectionList, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Drawer as DrawerLayout } from "react-native-drawer-layout"
-import { type ContentStyle } from "@shopify/flash-list"
-import { ListItem, ListView, ListViewRef, Screen, Text } from "app/components"
+import { Icon, ListItemActionProps, Screen, Text } from "app/components"
 import { isRTL } from "app/i18n"
 import { DemoTabParamList, DemoTabScreenProps } from "app/navigators/DemoNavigator"
 import { colors, spacing } from "app/theme"
@@ -32,12 +23,6 @@ export interface Demo {
   data: ReactElement[]
 }
 
-interface DemoListItem {
-  item: { name: string; useCases: string[] }
-  sectionIndex: number
-  handleScroll?: (sectionIndex: number, itemIndex?: number) => void
-}
-
 const slugify = (str: string) =>
   str
     .toLowerCase()
@@ -46,50 +31,10 @@ const slugify = (str: string) =>
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "")
 
-const WebListItem: FC<DemoListItem> = ({ item, sectionIndex }) => {
-  const sectionSlug = item.name.toLowerCase()
-
-  return (
-    <View>
-      <Link to={`/showroom/${sectionSlug}`} style={$menuContainer}>
-        <Text preset="bold">{item.name}</Text>
-      </Link>
-      {item.useCases.map((u) => {
-        const itemSlug = slugify(u)
-
-        return (
-          <Link key={`section${sectionIndex}-${u}`} to={`/showroom/${sectionSlug}/${itemSlug}`}>
-            <Text>{u}</Text>
-          </Link>
-        )
-      })}
-    </View>
-  )
-}
-
-const NativeListItem: FC<DemoListItem> = ({ item, sectionIndex, handleScroll }) => (
-  <View>
-    <Text onPress={() => handleScroll?.(sectionIndex)} preset="bold" style={$menuContainer}>
-      {item.name}
-    </Text>
-    {item.useCases.map((u, index) => (
-      <ListItem
-        key={`section${sectionIndex}-${u}`}
-        onPress={() => handleScroll?.(sectionIndex, index + 1)}
-        text={u}
-        rightIcon={isRTL ? "caretLeft" : "caretRight"}
-      />
-    ))}
-  </View>
-)
-
-const ShowroomListItem = Platform.select({ web: WebListItem, default: NativeListItem })
-
 export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowroomScreen(_props) {
   const [open, setOpen] = useState(false)
   const timeout = useRef<ReturnType<typeof setTimeout>>()
   const listRef = useRef<SectionList>(null)
-  const menuRef = useRef<ListViewRef<DemoListItem["item"]>>(null)
   const route = useRoute<RouteProp<DemoTabParamList, "DemoShowroom">>()
   const params = route.params
 
@@ -154,6 +99,7 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
               width: 250,
               paddingHorizontal: spacing.lg,
               flexDirection: "row",
+              marginBottom: 30,
             }}
           >
             <View
@@ -202,19 +148,34 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
             </View>
           </View>
 
-          <ListView<DemoListItem["item"]>
-            ref={menuRef}
-            contentContainerStyle={$listContentContainer}
-            estimatedItemSize={250}
-            data={Object.values(Demos).map((d) => ({
-              name: d.name,
-              useCases: d.data.map((u) => u.props.name as string),
-            }))}
-            keyExtractor={(item) => item.name}
-            renderItem={({ item, index: sectionIndex }) => (
-              <ShowroomListItem {...{ item, sectionIndex, handleScroll }} />
-            )}
-          />
+          <View>
+            <TouchableOpacity
+              style={{
+                paddingVertical: 10,
+                height: 50,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                text={"New Project"}
+                style={{
+                  alignSelf: "center",
+                  flexGrow: 1,
+                  flexShrink: 1,
+                  marginLeft: 50,
+                }}
+              />
+              <View style={{ marginRight: 50 }}>
+                <ListItemAction
+                  side="right"
+                  size={20}
+                  icon={"caretRight"}
+                  iconColor={palette.greyDarker}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     >
@@ -262,6 +223,46 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
   )
 }
 
+function ListItemAction(props: ListItemActionProps) {
+  const { icon, Component, iconColor, size, side } = props
+
+  const $iconContainerStyles = [$iconContainer]
+
+  if (Component) return Component
+
+  if (icon !== undefined) {
+    return (
+      <Icon
+        size={24}
+        icon={icon}
+        color={iconColor}
+        containerStyle={[
+          $iconContainerStyles,
+          side === "left" && $iconContainerLeft,
+          side === "right" && $iconContainerRight,
+          { height: size },
+        ]}
+      />
+    )
+  }
+
+  return null
+}
+
+const $iconContainer: ViewStyle = {
+  justifyContent: "center",
+  alignItems: "center",
+  flexGrow: 0,
+}
+
+const $iconContainerLeft: ViewStyle = {
+  marginEnd: spacing.md,
+}
+
+const $iconContainerRight: ViewStyle = {
+  marginStart: spacing.md,
+}
+
 function DemoCard(props: CardProps) {
   return (
     <Card elevate size="$4" bordered {...props} style={{ backgroundColor: palette.secondary }}>
@@ -297,16 +298,7 @@ const $drawer: ViewStyle = {
   flex: 1,
 }
 
-const $listContentContainer: ContentStyle = {
-  paddingHorizontal: spacing.lg,
-}
-
 const $logoImage: ImageStyle = {
   height: 77,
   width: 77,
-}
-
-const $menuContainer: ViewStyle = {
-  paddingBottom: spacing.xs,
-  paddingTop: spacing.lg,
 }
