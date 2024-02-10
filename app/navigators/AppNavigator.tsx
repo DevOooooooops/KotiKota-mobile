@@ -59,12 +59,12 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
-  const isAuthenticated = false
+  const isAuthenticated = true
 
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
-      initialRouteName={isAuthenticated ? "Welcome" : "Login"}
+      initialRouteName={isAuthenticated ? "Demo" : "Login"}
     >
       {isAuthenticated ? (
         <>

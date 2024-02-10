@@ -17,6 +17,7 @@ import type { CardProps } from "tamagui"
 import { Button, Card, H2, Image as TImage, Paragraph, XStack } from "tamagui"
 import { Avatar } from "app/components/Avatar/Avatar"
 import { ProjectCreationModal } from "app/screens/Drawer/components/ProjectCreationModal"
+import { ProfileModal } from "./components/ProfileModal"
 
 export interface Demo {
   name: string
@@ -35,6 +36,7 @@ const slugify = (str: string) =>
 export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowroomScreen(_props) {
   const [open, setOpen] = useState(false)
   const [openCreation, setOpenCreation] = useState(false)
+  const [openProfile, setOpenProfile] = useState(false)
   const timeout = useRef<ReturnType<typeof setTimeout>>()
   const listRef = useRef<SectionList>(null)
   const route = useRoute<RouteProp<DemoTabParamList, "DemoShowroom">>()
@@ -130,11 +132,11 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
                 }}
               >
                 <KKText
-                  style={{ fontSize: 16, color: palette.black, fontWeight: "bold" }}
-                  text={"Calendar"}
+                  style={{ fontSize: 14, color: palette.black, fontWeight: "bold" }}
+                  text={"Louis Vy Thon"}
                 />
               </View>
-              <View
+              <TouchableOpacity
                 style={{
                   width: "100%",
                   height: "50%",
@@ -146,7 +148,7 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
                   style={{ fontSize: 12, color: palette.black, marginTop: 2 }}
                   text={"View profile"}
                 />
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -221,6 +223,7 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
             </XStack>
           </View>
           <ProjectCreationModal open={openCreation} setOpen={setOpenCreation} />
+          <ProfileModal open={openProfile} setOpen={setOpenProfile} />
         </Screen>
       </TamaguiProvider>
     </DrawerLayout>
