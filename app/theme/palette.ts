@@ -21,4 +21,5 @@ export const palette = {
   success: "#16a34a",
   info: "#2563eb",
   warning: "#facc15",
+  cheese: "#ffa600",
 }

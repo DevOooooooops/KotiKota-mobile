@@ -2,8 +2,6 @@ import { observer } from "mobx-react-lite"
 import React, { ComponentType, FC, useEffect, useMemo } from "react"
 import {
   ActivityIndicator,
-  Image,
-  ImageSourcePropType,
   ImageStyle,
   ScrollView,
   StyleSheet,
@@ -30,53 +28,20 @@ import { colors, spacing } from "app/theme"
 import { delay } from "app/utils/delay"
 import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons"
 import { ContributionCard } from "app/screens/Project/components/ContributionCard"
-import { Project, ProjectHealthType, ProjectStatus } from "app/models/entities/project/Project"
+import { Project, ProjectHealthType } from "app/models/entities/project/Project"
 import { palette } from "app/theme/palette"
 import { DonationModal } from "app/screens/Project/components/DonationModal"
+import { convertDate } from "app/utils/convertDate"
+import { formatNumber } from "app/utils/formatNumber"
+import { renderBase64 } from "app/utils/base64ToString"
+import { Avatar } from "app/components/Avatar/Avatar"
 
 const ICON_SIZE = 14
 
-const rnrImage1 = require("assets/images/demo/rnr-image-1.png")
-const rnrImage2 = require("assets/images/demo/rnr-image-2.png")
-const rnrImage3 = require("assets/images/demo/rnr-image-3.png")
-const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
-
-const projects: Project[] = [
-  {
-    id: "",
-    name: "AWS CIRT",
-    description: "It's a beautiful life",
-    targetAmount: 80,
-    deadline: "2024-02-09T21:58:07.208Z",
-    ownerId: "",
-    status: ProjectStatus.OPEN,
-    health: ProjectHealthType.IN_PROGRESS,
-  },
-  {
-    id: "",
-    name: "Nudacy Records",
-    description: "The music is life",
-    targetAmount: 80,
-    deadline: "2024-02-09T21:58:07.208Z",
-    ownerId: "",
-    status: ProjectStatus.OPEN,
-    health: ProjectHealthType.IN_PROGRESS,
-  },
-  {
-    id: "",
-    name: "Fanilo project",
-    description: "Ho fifaliana no ameno ny tany",
-    targetAmount: 80,
-    deadline: "2024-02-09T21:58:07.208Z",
-    ownerId: "",
-    status: ProjectStatus.OPEN,
-    health: ProjectHealthType.IN_PROGRESS,
-  },
-]
-
 export const ProjectScreen: FC<DemoTabScreenProps<"Project">> = observer(
   function DemoPodcastListScreen(_props) {
-    const { episodeStore } = useStores()
+    const { episodeStore, authStore } = useStores()
+    const { allProjects } = authStore
 
     const [refreshing, setRefreshing] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
@@ -139,7 +104,7 @@ export const ProjectScreen: FC<DemoTabScreenProps<"Project">> = observer(
         </View>
         <ListView<Project>
           contentContainerStyle={$listContentContainer}
-          data={projects}
+          data={allProjects}
           extraData={episodeStore.favorites.length + episodeStore.episodes.length}
           refreshing={refreshing}
           estimatedItemSize={177}
@@ -187,10 +152,6 @@ const ProjectCard = observer(function ProjectCard({
   project: Project
   onPressContribute: () => void
 }) {
-  const imageUri = useMemo<ImageSourcePropType>(() => {
-    return rnrImages[Math.floor(Math.random() * rnrImages.length)]
-  }, [])
-
   // Grey heart
   const animatedLikeButtonStyles = useAnimatedStyle(() => {
     return {
@@ -228,6 +189,8 @@ const ProjectCard = observer(function ProjectCard({
     // openLinkInBrowser(episode.enclosure.link)
   }
 
+  const convertedDate = convertDate(project?.deadline ?? new Date().toISOString())
+
   const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
     () =>
       function ButtonLeftAccessory() {
@@ -255,6 +218,8 @@ const ProjectCard = observer(function ProjectCard({
     [],
   )
 
+  const image = renderBase64(project?.logo ?? "")
+
   return (
     <Card
       style={$item}
@@ -264,26 +229,60 @@ const ProjectCard = observer(function ProjectCard({
       HeadingComponent={
         <View style={$metadata}>
           <Text
-            style={$metadataText}
-            size="xxs"
-            accessibilityLabel={project?.deadline ?? new Date().toISOString()}
+            style={{
+              ...$metadataText,
+              color:
+                project.health === ProjectHealthType.SUCCESS
+                  ? palette.green
+                  : project.health === ProjectHealthType.IN_PROGRESS
+                  ? palette.cheese
+                  : palette.pastelRed,
+            }}
+            size="xs"
           >
-            {project?.deadline}
+            {project.name}
+          </Text>
+          <MaterialIcon
+            name="clock-alert-outline"
+            size={15}
+            color={palette.lightGrey}
+            style={{ height: "80%", justifyContent: "center", alignItems: "center" }}
+          />
+          <Text style={$metadataText} size="xxs">
+            {convertedDate}
           </Text>
         </View>
       }
       content={`${project.description}`}
-      RightComponent={<Image source={imageUri} style={$itemThumbnail} />}
+      RightComponent={<Avatar source={image} style={$itemThumbnail} />}
       FooterComponent={
-        <Button
-          onPress={handlePressFavorite}
-          onLongPress={handlePressFavorite}
-          style={[$favoriteButton]}
-          accessibilityLabel={"Donate"}
-          LeftAccessory={ButtonLeftAccessory}
-        >
-          <Text size="xxs" weight="medium" text={"Donate"} style={{ color: palette.black }} />
-        </Button>
+        <View style={{ flexDirection: "row" }}>
+          <Button
+            onPress={handlePressFavorite}
+            onLongPress={handlePressFavorite}
+            style={[$favoriteButton]}
+            accessibilityLabel={"Donate"}
+            LeftAccessory={ButtonLeftAccessory}
+          >
+            <Text size="xxs" weight="medium" text={"Donate"} style={{ color: palette.black }} />
+          </Button>
+          <View
+            style={{
+              marginLeft: 50,
+              alignItems: "flex-end",
+              paddingBottom: 7,
+              flexDirection: "row",
+            }}
+          >
+            <Text
+              size="xs"
+              weight="medium"
+              text={formatNumber(project.targetAmount ?? 0)}
+              style={{ color: palette.black, marginRight: 5 }}
+            />
+            <Text size="xxs" weight="medium" text={"mga"} style={{ color: palette.black }} />
+          </View>
+        </View>
       }
     />
   )
@@ -310,6 +309,8 @@ const $itemThumbnail: ImageStyle = {
   marginTop: spacing.sm,
   borderRadius: 50,
   alignSelf: "flex-start",
+  width: 50,
+  height: 50,
 }
 const $iconContainer: ViewStyle = {
   height: ICON_SIZE,
@@ -322,12 +323,13 @@ const $metadata: TextStyle = {
   color: colors.textDim,
   marginTop: spacing.xs,
   flexDirection: "row",
+  alignItems: "center",
 }
 
 const $metadataText: TextStyle = {
-  color: colors.textDim,
   marginEnd: spacing.md,
   marginBottom: spacing.xs,
+  marginLeft: 2,
 }
 
 const $favoriteButton: ViewStyle = {

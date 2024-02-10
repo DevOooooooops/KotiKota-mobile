@@ -42,11 +42,10 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
   const listRef = useRef<SectionList>(null)
   const route = useRoute<RouteProp<DemoTabParamList, "DemoShowroom">>()
   const params = route.params
-  const {
-    authStore: { currentUser },
-  } = useStores()
+  const { authStore } = useStores()
+  const { currentUser } = authStore
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (params !== undefined && Object.keys(params).length > 0) {
       const demoValues = Object.values(Demos)
       const findSectionIndex = demoValues.findIndex(
@@ -66,6 +65,12 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
       handleScroll(findSectionIndex, findItemIndex)
     }
   }, [params])
+
+  useEffect(() => {
+    ;(async () => {
+      await authStore.getAllProjects()
+    })()
+  }, [])
 
   const toggleDrawer = () => {
     if (!open) {

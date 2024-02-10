@@ -219,6 +219,7 @@ export function Card(props: CardProps) {
                 txOptions={contentTxOptions}
                 {...ContentTextProps}
                 style={$contentStyle}
+                numberOfLines={3}
               />
             ))}
         </HeaderContentWrapper>

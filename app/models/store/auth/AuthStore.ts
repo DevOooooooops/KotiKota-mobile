@@ -2,12 +2,15 @@ import { types } from "mobx-state-tree"
 import { flow } from "mobx"
 import { User, UserModel } from "app/models/entities/user/user"
 import { AuthApi } from "app/services/api/auth-api"
+import { Project, ProjectModel } from "app/models/entities/project/Project"
+import { ProjectApi } from "app/services/api/project-api"
 
 export const AuthStoreModel = types
   .model("Auth")
   .props({
     accessToken: types.maybeNull(types.string),
     currentUser: types.maybeNull(UserModel),
+    allProjects: types.optional(types.array(ProjectModel), []),
   })
   .actions((self) => ({
     reset: () => {
@@ -40,6 +43,11 @@ export const AuthStoreModel = types
     },
   }))
   .actions((self) => ({
+    setAllProjects(projects: Project[]) {
+      self.allProjects.replace(projects)
+    },
+  }))
+  .actions((self) => ({
     logout: flow(function* () {
       self.reset()
     }),
@@ -52,6 +60,17 @@ export const AuthStoreModel = types
         const getWhoAmIResult = yield signInApi.whoami(username)
         self.setAccessToken(username)
         self.setUser(getWhoAmIResult.user.user)
+      } catch (e) {
+        console.tron.log(e)
+      }
+    }),
+  }))
+  .actions((self) => ({
+    getAllProjects: flow(function* () {
+      const projectApi = new ProjectApi()
+      try {
+        const getProjectsResult = yield projectApi.getProjects(self?.accessToken ?? "")
+        self.setAllProjects(getProjectsResult.projects)
       } catch (e) {
         console.tron.log(e)
       }

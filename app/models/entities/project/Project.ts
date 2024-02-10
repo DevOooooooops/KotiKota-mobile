@@ -20,6 +20,9 @@ export const ProjectModel = types.model("Project").props({
   ownerId: types.maybeNull(types.string),
   status: types.maybeNull(types.enumeration(Object.values(ProjectStatus))),
   health: types.maybeNull(types.enumeration(Object.values(ProjectHealthType))),
+  logo: types.maybeNull(types.string),
+  totalDonations: types.maybeNull(types.number),
+  collectedAmount: types.maybeNull(types.number),
 })
 
 export interface Project extends Instance<typeof ProjectModel> {}
