@@ -63,7 +63,7 @@ const AppStack = observer(function AppStack() {
   const {
     authStore: { currentUser, accessToken },
   } = useStores()
-  const isAuthenticated = accessToken && currentUser?.id
+  const isAuthenticated = !!accessToken && !!currentUser?.id
 
   return (
     <Stack.Navigator
@@ -72,7 +72,6 @@ const AppStack = observer(function AppStack() {
     >
       {isAuthenticated ? (
         <>
-          <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
           <Stack.Screen name="Demo" component={DemoNavigator} />
         </>
       ) : (

@@ -48,22 +48,10 @@ export const AuthStoreModel = types
     login: flow(function* (username: string, password: string) {
       const signInApi = new AuthApi()
       try {
-        const getTokenResult = yield signInApi.getToken(username, password)
-        self.setAccessToken(getTokenResult.accessToken)
-        const getWhoAmIResult = yield signInApi.whoami(getTokenResult.accessToken)
-        self.setUser({
-          id: getWhoAmIResult.user.id,
-          firebaseId: getWhoAmIResult.user.firebaseId,
-          birthDate: getWhoAmIResult.user.birthDate,
-          profile: {
-            first_name: getWhoAmIResult.user.birthDate,
-            last_name: getWhoAmIResult.user.birthDate,
-            email: getWhoAmIResult.user.birthDate,
-          },
-          bankInfo: {
-            amount: getWhoAmIResult.user.amount,
-          },
-        })
+        console.tron.log(password)
+        const getWhoAmIResult = yield signInApi.whoami(username)
+        self.setAccessToken(username)
+        self.setUser(getWhoAmIResult.user.user)
       } catch (e) {
         console.tron.log(e)
       }

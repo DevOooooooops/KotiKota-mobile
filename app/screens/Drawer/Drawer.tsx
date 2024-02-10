@@ -18,6 +18,7 @@ import { Button, Card, H2, Image as TImage, Paragraph, XStack } from "tamagui"
 import { Avatar } from "app/components/Avatar/Avatar"
 import { ProjectCreationModal } from "app/screens/Drawer/components/ProjectCreationModal"
 import { ProfileModal } from "./components/ProfileModal"
+import { useStores } from "app/models"
 
 export interface Demo {
   name: string
@@ -41,8 +42,10 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
   const listRef = useRef<SectionList>(null)
   const route = useRoute<RouteProp<DemoTabParamList, "DemoShowroom">>()
   const params = route.params
+  const {
+    authStore: { currentUser },
+  } = useStores()
 
-  // handle Web links
   React.useEffect(() => {
     if (params !== undefined && Object.keys(params).length > 0) {
       const demoValues = Object.values(Demos)
@@ -133,7 +136,7 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
               >
                 <KKText
                   style={{ fontSize: 14, color: palette.black, fontWeight: "bold" }}
-                  text={"Louis Vy Thon"}
+                  text={`${currentUser?.profile?.last_name} ${currentUser?.profile?.first_name}`}
                 />
               </View>
               <TouchableOpacity

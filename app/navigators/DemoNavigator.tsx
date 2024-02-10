@@ -50,12 +50,12 @@ export function DemoNavigator() {
         name="DemoShowroom"
         component={Drawer}
         options={{
-          tabBarLabel: translate("demoNavigator.componentsTab"),
+          tabBarLabel: "Accueil",
           tabBarIcon: ({ focused }) => (
-            <Icon
-              icon="components"
+            <FeatherIcon
+              name="home"
+              size={25}
               color={focused ? palette.primary : palette.lightGrey}
-              size={30}
             />
           ),
         }}

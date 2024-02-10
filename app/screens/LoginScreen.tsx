@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite"
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
 import { TouchableOpacity, View } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
 import { ErrorBoundary } from "app/screens"
@@ -9,7 +9,8 @@ import { InputField } from "app/components/InputField/InputField"
 import { InputFieldPassword } from "app/components/InputField/InputFieldPassword"
 import { Controller, useForm } from "react-hook-form"
 import { Avatar } from "app/components/Avatar/Avatar"
-// import { useStores } from "app/models"
+import { useStores } from "app/models"
+import { Spinner, YStack } from "tamagui"
 
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
@@ -19,7 +20,8 @@ interface LoginData {
 }
 
 export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_props) {
-  /*const { authStore } = useStores()*/
+  const { authStore } = useStores()
+  const [loading, setLoading] = useState(false)
   const {
     handleSubmit,
     control,
@@ -30,8 +32,9 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   })
 
   const onSubmit = async (loginData: LoginData) => {
-    /*console.tron.log(loginData)
-    await authStore.login(loginData.username, loginData.password)*/
+    setLoading(true)
+    await authStore.login(loginData.username, loginData.password)
+    setLoading(false)
   }
 
   return (
@@ -130,13 +133,19 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
             onPress={handleSubmit(onSubmit)}
           >
             <View style={{ justifyContent: "center" }}>
-              <KKText
-                style={{
-                  color: palette.white,
-                  fontSize: 16,
-                }}
-                text={"Connect"}
-              />
+              {loading ? (
+                <YStack padding="$3" alignItems="center">
+                  <Spinner size="small" color={palette.white} />
+                </YStack>
+              ) : (
+                <KKText
+                  style={{
+                    color: palette.white,
+                    fontSize: 16,
+                  }}
+                  text={"Connect"}
+                />
+              )}
             </View>
           </TouchableOpacity>
         </View>
