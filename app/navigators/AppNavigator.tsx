@@ -22,6 +22,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { TamaguiProvider } from "tamagui"
 import { tamaguiConfig } from "tamagui.config"
+import { useStores } from "app/models"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -59,7 +60,10 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
-  const isAuthenticated = true
+  const {
+    authStore: { currentUser, accessToken },
+  } = useStores()
+  const isAuthenticated = accessToken && currentUser?.id
 
   return (
     <Stack.Navigator

@@ -52,4 +52,6 @@ export interface ApiConfig {
   timeout: number
 }
 
+export type GetTokenResult = { accessToken: string } | GeneralApiProblem
+
 export type GetWhoAmIResult = { user: User } | GeneralApiProblem
