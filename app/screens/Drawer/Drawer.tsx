@@ -16,6 +16,7 @@ import tamaguiConfig from "../../../tamagui.config"
 import type { CardProps } from "tamagui"
 import { Button, Card, H2, Image as TImage, Paragraph, XStack } from "tamagui"
 import { Avatar } from "app/components/Avatar/Avatar"
+import { ProjectCreationModal } from "app/screens/Drawer/components/ProjectCreationModal"
 
 export interface Demo {
   name: string
@@ -33,6 +34,7 @@ const slugify = (str: string) =>
 
 export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowroomScreen(_props) {
   const [open, setOpen] = useState(false)
+  const [openCreation, setOpenCreation] = useState(false)
   const timeout = useRef<ReturnType<typeof setTimeout>>()
   const listRef = useRef<SectionList>(null)
   const route = useRoute<RouteProp<DemoTabParamList, "DemoShowroom">>()
@@ -156,6 +158,7 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
                 flexDirection: "row",
                 alignItems: "center",
               }}
+              onPress={() => setOpenCreation(true)}
             >
               <Text
                 text={"New Project"}
@@ -217,6 +220,7 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
               />
             </XStack>
           </View>
+          <ProjectCreationModal open={openCreation} setOpen={setOpenCreation} />
         </Screen>
       </TamaguiProvider>
     </DrawerLayout>

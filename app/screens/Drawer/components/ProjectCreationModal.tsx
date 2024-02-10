@@ -1,4 +1,4 @@
-import { Adapt, Dialog, Sheet } from "tamagui"
+import { Adapt, Dialog, Sheet, TextArea } from "tamagui"
 import { TouchableOpacity, View } from "react-native"
 import { palette } from "app/theme/palette"
 import { Avatar } from "app/components/Avatar/Avatar"
@@ -6,24 +6,26 @@ import React from "react"
 import { Text } from "app/components"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { InputField } from "app/components/InputField/InputField"
-
-interface DonationModalProps {
+interface ProjectCreationModalProps {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const DonationModal = ({ open, setOpen }: DonationModalProps) => {
+export const ProjectCreationModal = ({ open, setOpen }: ProjectCreationModalProps) => {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<{ amount: string }>({
+  } = useForm<{ name: string; description: string; targetAmount: string }>({
     mode: "all",
-    defaultValues: { amount: "" },
+    defaultValues: { name: "", description: "", targetAmount: "" },
   })
 
-  const onDonate: SubmitHandler<{ amount: string }> = (amount) => {
-    console.tron.log(amount)
+  const onCreate: SubmitHandler<{ name: string; description: string; targetAmount: string }> = (
+    data,
+  ) => {
+    const { name, description, targetAmount } = data
+    console.tron.log(name, description, targetAmount)
     setOpen(false)
   }
 
@@ -90,7 +92,7 @@ export const DonationModal = ({ open, setOpen }: DonationModalProps) => {
             </View>
             <View
               style={{
-                width: "50%",
+                width: "60%",
                 height: 150,
                 justifyContent: "flex-end",
                 alignItems: "center",
@@ -99,44 +101,44 @@ export const DonationModal = ({ open, setOpen }: DonationModalProps) => {
             >
               <Text
                 preset="subheading"
-                text={"Thanks for using KotiKota !"}
+                text={"Create new project"}
                 style={{ color: palette.lightGrey }}
               />
+              <Text preset="subheading" text={"With us !"} style={{ color: palette.lightGrey }} />
             </View>
-          </View>
-          <View
-            style={{
-              height: 50,
-              width: "100%",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
-          >
-            <Text
-              preset="formLabel"
-              text={"You're supporting  "}
-              style={{ color: palette.lightGrey }}
-            />
-            <Text preset="formLabel" text={"Numer Madagascar"} style={{ color: palette.black }} />
           </View>
 
           <View
             style={{
               width: "100%",
-              height: 120,
-              justifyContent: "center",
+              height: 300,
               flexDirection: "column",
               paddingLeft: 40,
             }}
           >
-            <View style={{ marginBottom: 2 }}>
-              <Text preset="default" text={"Ariary"} style={{ color: palette.primary }} />
+            <View style={{ marginVertical: 20 }}>
+              <Controller
+                control={control}
+                name="name"
+                rules={{
+                  required: "Name is required",
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <InputField
+                    text={"Name"}
+                    error={!!errors.name}
+                    value={value}
+                    onChange={onChange}
+                    backgroundColor={palette.lighterGrey}
+                    width={300}
+                  />
+                )}
+              />
             </View>
             <View>
               <Controller
                 control={control}
-                name="amount"
+                name="targetAmount"
                 rules={{
                   validate: {
                     isValidNumber: (value) => {
@@ -147,12 +149,26 @@ export const DonationModal = ({ open, setOpen }: DonationModalProps) => {
                 }}
                 render={({ field: { onChange, value } }) => (
                   <InputField
-                    text={"Amount"}
-                    error={!!errors.amount}
+                    text={"Target"}
+                    error={!!errors.targetAmount}
                     value={value}
                     onChange={onChange}
                     backgroundColor={palette.lighterGrey}
                     width={300}
+                  />
+                )}
+              />
+            </View>
+            <View style={{ marginVertical: 20 }}>
+              <Controller
+                control={control}
+                name="description"
+                render={({ field: { onChange, value } }) => (
+                  <TextArea
+                    size="$6"
+                    borderWidth={2}
+                    style={{ width: "95%", backgroundColor: palette.lighterGrey }}
+                    placeholder={"Description"}
                   />
                 )}
               />
@@ -193,7 +209,7 @@ export const DonationModal = ({ open, setOpen }: DonationModalProps) => {
                 alignItems: "center",
                 marginRight: 20,
               }}
-              onPress={handleSubmit(onDonate)}
+              onPress={handleSubmit(onCreate)}
             >
               <Text preset="default" text={"Donate"} style={{ color: palette.black }} />
             </TouchableOpacity>
