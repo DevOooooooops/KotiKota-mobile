@@ -143,6 +143,7 @@ export const Drawer: FC<DemoTabScreenProps<"DemoShowroom">> = function DemoShowr
                   justifyContent: "flex-start",
                   alignItems: "center",
                 }}
+                onPress={() => setOpenProfile(true)}
               >
                 <KKText
                   style={{ fontSize: 12, color: palette.black, marginTop: 2 }}

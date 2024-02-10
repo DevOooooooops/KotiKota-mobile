@@ -1,34 +1,17 @@
-import { Adapt, Dialog, Sheet, TextArea } from "tamagui"
+import { Adapt, Dialog, Sheet } from "tamagui"
 import { TouchableOpacity, View } from "react-native"
 import { palette } from "app/theme/palette"
 import { Avatar } from "app/components/Avatar/Avatar"
 import React from "react"
-import { Text } from "app/components"
-import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import { InputField } from "app/components/InputField/InputField"
+import { KKText } from "app/components/Text/KKText"
+import AntDesignIcon from "react-native-vector-icons/AntDesign"
+import { LabelWithTextRow } from "app/components/LabelWithText/label-with-text"
 interface ProjectCreationModalProps {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const ProfileModal = ({ open, setOpen }: ProjectCreationModalProps) => {
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<{ name: string; description: string; targetAmount: string }>({
-    mode: "all",
-    defaultValues: { name: "", description: "", targetAmount: "" },
-  })
-
-  const onCreate: SubmitHandler<{ name: string; description: string; targetAmount: string }> = (
-    data,
-  ) => {
-    const { name, description, targetAmount } = data
-    console.tron.log(name, description, targetAmount)
-    setOpen(false)
-  }
-
   return (
     <Dialog modal open={open}>
       <Adapt when="sm" platform="touch">
@@ -76,7 +59,7 @@ export const ProfileModal = ({ open, setOpen }: ProjectCreationModalProps) => {
           >
             <View
               style={{
-                width: "40%",
+                width: "100%",
                 height: 150,
                 justifyContent: "flex-end",
                 alignItems: "center",
@@ -89,130 +72,32 @@ export const ProfileModal = ({ open, setOpen }: ProjectCreationModalProps) => {
                 resizeMethod="auto"
                 style={{ height: 100, width: 100 }}
               />
-            </View>
-            <View
-              style={{
-                width: "60%",
-                height: 150,
-                justifyContent: "flex-end",
-                alignItems: "center",
-                paddingBottom: 30,
-              }}
-            >
-              <Text
-                preset="subheading"
-                text={"Create new project"}
-                style={{ color: palette.lightGrey }}
+              <KKText
+                style={{ fontSize: 14, color: palette.black, fontWeight: "bold", marginTop: 10 }}
+                text={"Louis Vy Thon"}
               />
-              <Text preset="subheading" text={"With us !"} style={{ color: palette.lightGrey }} />
+              <TouchableOpacity
+                style={{
+                  width: 30,
+                  height: 30,
+                  position: "absolute",
+                  top: 10,
+                  right: 0,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onPress={() => setOpen(false)}
+              >
+                <AntDesignIcon name="closecircleo" size={30} />
+              </TouchableOpacity>
             </View>
           </View>
 
-          <View
-            style={{
-              width: "100%",
-              height: 300,
-              flexDirection: "column",
-              paddingLeft: 40,
-            }}
-          >
-            <View style={{ marginVertical: 20 }}>
-              <Controller
-                control={control}
-                name="name"
-                rules={{
-                  required: "Name is required",
-                }}
-                render={({ field: { onChange, value } }) => (
-                  <InputField
-                    text={"Name"}
-                    error={!!errors.name}
-                    value={value}
-                    onChange={onChange}
-                    backgroundColor={palette.lighterGrey}
-                    width={300}
-                  />
-                )}
-              />
-            </View>
-            <View>
-              <Controller
-                control={control}
-                name="targetAmount"
-                rules={{
-                  validate: {
-                    isValidNumber: (value) => {
-                      const intValue = parseInt(value, 10)
-                      return !isNaN(intValue)
-                    },
-                  },
-                }}
-                render={({ field: { onChange, value } }) => (
-                  <InputField
-                    text={"Target"}
-                    error={!!errors.targetAmount}
-                    value={value}
-                    onChange={onChange}
-                    backgroundColor={palette.lighterGrey}
-                    width={300}
-                  />
-                )}
-              />
-            </View>
-            <View style={{ marginVertical: 20 }}>
-              <Controller
-                control={control}
-                name="description"
-                render={({ field: { onChange, value } }) => (
-                  <TextArea
-                    size="$6"
-                    borderWidth={2}
-                    style={{ width: "95%", backgroundColor: palette.lighterGrey }}
-                    placeholder={"Description"}
-                  />
-                )}
-              />
-            </View>
-          </View>
-
-          <View
-            style={{
-              height: 50,
-              width: "100%",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "flex-end",
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                backgroundColor: palette.primary,
-                width: 80,
-                height: 40,
-                borderRadius: 10,
-                justifyContent: "center",
-                alignItems: "center",
-                marginRight: 20,
-              }}
-              onPress={() => setOpen(false)}
-            >
-              <Text preset="default" text={"Cancel"} style={{ color: palette.black }} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                backgroundColor: palette.primary,
-                width: 80,
-                height: 40,
-                borderRadius: 10,
-                justifyContent: "center",
-                alignItems: "center",
-                marginRight: 20,
-              }}
-              onPress={handleSubmit(onCreate)}
-            >
-              <Text preset="default" text={"Donate"} style={{ color: palette.black }} />
-            </TouchableOpacity>
+          <View style={{ width: "100%", marginTop: 20 }}>
+            <LabelWithTextRow label={"Nom"} text={"Jean Du Jardin"} />
+            <LabelWithTextRow label={"Nom"} text={"Jean Du Jardin"} />
+            <LabelWithTextRow label={"Nom"} text={"Jean Du Jardin"} />
+            <LabelWithTextRow label={"Nom"} text={"Jean Du Jardin"} />
           </View>
         </Dialog.Content>
       </Dialog.Portal>
