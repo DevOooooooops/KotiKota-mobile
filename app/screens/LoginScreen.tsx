@@ -2,15 +2,13 @@ import { observer } from "mobx-react-lite"
 import React, { FC } from "react"
 import { TouchableOpacity, View } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
-// import { Avatar } from "app/components/Avatar/Avatar"
 import { ErrorBoundary } from "app/screens"
 import { KKText } from "app/components/Text/KKText"
 import { palette } from "app/theme/palette"
 import { InputField } from "app/components/InputField/InputField"
 import { InputFieldPassword } from "app/components/InputField/InputFieldPassword"
 import { Controller, useForm } from "react-hook-form"
-import IoniconIcon from "react-native-vector-icons/Ionicons"
-import FontAwesomeIcon from "react-native-vector-icons/FontAwesome"
+import { Avatar } from "app/components/Avatar/Avatar"
 // import { useStores } from "app/models"
 
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
@@ -45,12 +43,14 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         style={{ height: "100%", width: "100%", position: "absolute" }}
       />*/}
       <View
-        style={{ height: 170, width: "100%", alignItems: "center", justifyContent: "flex-end" }}
+        style={{ height: 250, width: "100%", alignItems: "center", justifyContent: "flex-end" }}
       >
-        <KKText
-          style={{ fontSize: 50, color: palette.black, fontWeight: "bold" }}
-          text={"Sign In"}
-        ></KKText>
+        <Avatar
+          source={require("assets/images/kirioka-logo.png")}
+          resizeMode="stretch"
+          resizeMethod="auto"
+          style={{ height: 140, width: 140 }}
+        />
       </View>
       <View
         style={{
@@ -58,20 +58,17 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
           width: "100%",
           backgroundColor: palette.white,
           alignItems: "center",
-          marginTop: 150,
+          marginTop: 80,
         }}
       >
         <View
           style={{
-            marginVertical: 10,
-            width: "70%",
+            marginVertical: 5,
+            width: "80%",
             flexDirection: "row",
             justifyContent: "center",
           }}
         >
-          <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
-            <FontAwesomeIcon name="user-o" size={33} color={palette.deepPink} />
-          </View>
           <Controller
             control={control}
             name="username"
@@ -82,7 +79,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
                 error={!!errors.username}
                 value={value}
                 onChange={onChange}
-                backgroundColor={palette.white}
+                backgroundColor={palette.neutral}
                 width={250}
               />
             )}
@@ -90,15 +87,12 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         </View>
         <View
           style={{
-            marginVertical: 10,
-            width: "70%",
+            marginVertical: 5,
+            width: "85%",
             flexDirection: "row",
             justifyContent: "center",
           }}
         >
-          <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
-            <IoniconIcon name="lock-closed-outline" size={35} color={palette.deepPink} />
-          </View>
           <Controller
             control={control}
             name="password"
@@ -109,33 +103,11 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
                 error={!!errors.password}
                 value={value}
                 onChange={onChange}
-                backgroundColor={palette.white}
+                backgroundColor={palette.neutral}
                 width={250}
               />
             )}
           />
-        </View>
-        <View style={{ width: "100%", justifyContent: "center", alignItems: "flex-end" }}>
-          <TouchableOpacity
-            style={{
-              width: 200,
-              height: 40,
-              borderRadius: 5,
-              justifyContent: "center",
-              alignItems: "flex-end",
-              marginRight: 50,
-            }}
-            onPress={() => navigate("Registration")}
-          >
-            <KKText
-              style={{
-                color: palette.black,
-                fontSize: 16,
-                textDecorationLine: "underline",
-              }}
-              text={"Don't have an account? "}
-            />
-          </TouchableOpacity>
         </View>
         <View
           style={{
@@ -148,8 +120,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         >
           <TouchableOpacity
             style={{
-              backgroundColor: palette.deepPink,
-              width: 150,
+              backgroundColor: palette.primary,
+              width: 260,
               height: 40,
               borderRadius: 5,
               justifyContent: "center",
@@ -180,19 +152,26 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
           flexDirection: "row",
         }}
       >
-        <KKText
+        <TouchableOpacity
           style={{
-            color: palette.black,
-            fontSize: 30,
+            width: 200,
+            height: 40,
+            borderRadius: 5,
+            justifyContent: "center",
+            alignItems: "flex-end",
+            marginRight: 50,
           }}
-          text={"CashQuest"}
-        />
-        {/*<Avatar
-          source={require("assets/images/cash-quest-logo.png")}
-          resizeMode="stretch"
-          resizeMethod="auto"
-          style={{ height: 50, width: 50, marginLeft: 10 }}
-        />*/}
+          onPress={() => navigate("Registration")}
+        >
+          <KKText
+            style={{
+              color: palette.black,
+              fontSize: 16,
+              textDecorationLine: "underline",
+            }}
+            text={"Don't have an account? "}
+          />
+        </TouchableOpacity>
       </View>
     </ErrorBoundary>
   )

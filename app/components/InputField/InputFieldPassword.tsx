@@ -39,15 +39,23 @@ export const InputFieldPassword = ({
         secureTextEntry={showPassword}
         label={text}
         error={error}
-        textColor={palette.deepPink}
-        selectionColor={palette.deepPink}
+        textColor={palette.primary}
+        selectionColor={palette.primary}
         value={value}
         onChangeText={onChange}
         right={
           showPassword ? (
-            <TextInput.Icon icon="eye" onPress={() => toggleShowPassword()} />
+            <TextInput.Icon
+              icon="eye"
+              onPress={() => toggleShowPassword()}
+              color={palette.primary}
+            />
           ) : (
-            <TextInput.Icon icon="eye-off" onPress={() => toggleShowPassword()} />
+            <TextInput.Icon
+              icon="eye-off"
+              onPress={() => toggleShowPassword()}
+              color={palette.primary}
+            />
           )
         }
         style={{
@@ -56,11 +64,11 @@ export const InputFieldPassword = ({
           width: width,
           elevation: 10,
           borderBottomWidth: error ? 2 : 0,
-          borderBottomColor: error ? palette.pastelRed : palette.greyDarker,
+          borderBottomColor: error ? palette.pastelRed : palette.primary,
         }}
         theme={{
           colors: {
-            primary: palette.deepPink,
+            primary: palette.primary,
           },
         }}
       />
