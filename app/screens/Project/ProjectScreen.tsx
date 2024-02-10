@@ -46,8 +46,8 @@ export const ProjectScreen: FC<DemoTabScreenProps<"Project">> = observer(
     const [refreshing, setRefreshing] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
     const [open, setOpen] = React.useState(false)
+    const [currentProject, setCurrentProject] = React.useState<Project>()
 
-    // initially, kick off a background refresh without the refreshing UI
     useEffect(() => {
       ;(async function load() {
         setIsLoading(true)
@@ -97,7 +97,7 @@ export const ProjectScreen: FC<DemoTabScreenProps<"Project">> = observer(
             flexDirection: "row",
           }}
         >
-          <View style={{ justifyContent: "center", width: "34%", marginLeft: 25 }}>
+          <View style={{ justifyContent: "center", width: "45%", marginLeft: 25 }}>
             <Text preset="subheading" text={"May interest you"} />
           </View>
           <MaterialIcon name="star-shooting" size={25} />
@@ -134,11 +134,13 @@ export const ProjectScreen: FC<DemoTabScreenProps<"Project">> = observer(
             )
           }
           renderItem={({ item }) => (
-            <ProjectCard project={item} onPressContribute={() => setOpen(true)} />
+            <ProjectCard project={item} setCurrentProject={setCurrentProject} setOpen={setOpen} />
           )}
         />
         <View>
-          <DonationModal open={open} setOpen={setOpen} />
+          {currentProject && (
+            <DonationModal open={open} setOpen={setOpen} project={currentProject} />
+          )}
         </View>
       </Screen>
     )
@@ -147,10 +149,12 @@ export const ProjectScreen: FC<DemoTabScreenProps<"Project">> = observer(
 
 const ProjectCard = observer(function ProjectCard({
   project,
-  onPressContribute,
+  setCurrentProject,
+  setOpen,
 }: {
   project: Project
-  onPressContribute: () => void
+  setCurrentProject: React.Dispatch<React.SetStateAction<Project | undefined>>
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   // Grey heart
   const animatedLikeButtonStyles = useAnimatedStyle(() => {
@@ -182,7 +186,8 @@ const ProjectCard = observer(function ProjectCard({
    */
 
   const handlePressFavorite = () => {
-    onPressContribute()
+    setCurrentProject(project)
+    setOpen(true)
   }
 
   const handlePressCard = () => {
@@ -199,18 +204,10 @@ const ProjectCard = observer(function ProjectCard({
             <Animated.View
               style={[$iconContainer, StyleSheet.absoluteFill, animatedLikeButtonStyles]}
             >
-              <Icon
-                icon="community"
-                size={ICON_SIZE}
-                color={colors.palette.neutral800} // dark grey
-              />
+              <Icon icon="community" size={ICON_SIZE} color={colors.palette.neutral800} />
             </Animated.View>
             <Animated.View style={[$iconContainer, animatedUnlikeButtonStyles]}>
-              <Icon
-                icon="heart"
-                size={ICON_SIZE}
-                color={colors.palette.primary400} // pink
-              />
+              <Icon icon="heart" size={ICON_SIZE} color={colors.palette.primary400} />
             </Animated.View>
           </View>
         )

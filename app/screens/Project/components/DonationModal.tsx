@@ -6,13 +6,16 @@ import React from "react"
 import { Text } from "app/components"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { InputField } from "app/components/InputField/InputField"
+import { Project } from "app/models/entities/project/Project"
+import { renderBase64 } from "app/utils/base64ToString"
 
 interface DonationModalProps {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  project: Project
 }
 
-export const DonationModal = ({ open, setOpen }: DonationModalProps) => {
+export const DonationModal = ({ open, setOpen, project }: DonationModalProps) => {
   const {
     handleSubmit,
     control,
@@ -26,6 +29,8 @@ export const DonationModal = ({ open, setOpen }: DonationModalProps) => {
     console.tron.log(amount)
     setOpen(false)
   }
+
+  const image = renderBase64(project?.logo ?? "")
 
   return (
     <Dialog modal open={open}>
@@ -82,10 +87,10 @@ export const DonationModal = ({ open, setOpen }: DonationModalProps) => {
               }}
             >
               <Avatar
-                source={require("assets/images/kirioka-logo.png")}
+                source={image}
                 resizeMode="stretch"
                 resizeMethod="auto"
-                style={{ height: 100, width: 100 }}
+                style={{ height: 100, width: 120, borderRadius: 20 }}
               />
             </View>
             <View
@@ -118,7 +123,7 @@ export const DonationModal = ({ open, setOpen }: DonationModalProps) => {
               text={"You're supporting  "}
               style={{ color: palette.lightGrey }}
             />
-            <Text preset="formLabel" text={"Numer Madagascar"} style={{ color: palette.black }} />
+            <Text preset="formLabel" text={project.name ?? ""} style={{ color: palette.black }} />
           </View>
 
           <View

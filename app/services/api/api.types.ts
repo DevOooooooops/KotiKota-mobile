@@ -1,6 +1,7 @@
 import { User } from "app/models/entities/user/user"
 import { GeneralApiProblem } from "app/services/api/apiProblem"
 import { Project } from "app/models/entities/project/Project"
+import { Donation } from "app/models/entities/donation/Donation"
 
 /**
  * These types indicate the shape of the data you expect to receive from your
@@ -57,3 +58,4 @@ export type GetWhoAmIResult = { user: User } | GeneralApiProblem
 
 export type GetProjectsResult = { projects: Project[] } | GeneralApiProblem
 export type GetProjectResult = { project: Project } | GeneralApiProblem
+export type GetDonationsResult = { donations: Donation } | GeneralApiProblem

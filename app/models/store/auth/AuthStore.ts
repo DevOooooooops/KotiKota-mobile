@@ -4,6 +4,7 @@ import { User, UserModel } from "app/models/entities/user/user"
 import { AuthApi } from "app/services/api/auth-api"
 import { Project, ProjectModel } from "app/models/entities/project/Project"
 import { ProjectApi } from "app/services/api/project-api"
+import { Donation } from "app/models/entities/donation/Donation"
 
 export const AuthStoreModel = types
   .model("Auth")
@@ -11,6 +12,7 @@ export const AuthStoreModel = types
     accessToken: types.maybeNull(types.string),
     currentUser: types.maybeNull(UserModel),
     allProjects: types.optional(types.array(ProjectModel), []),
+    selfProjects: types.optional(types.array(ProjectModel), []),
   })
   .actions((self) => ({
     reset: () => {
@@ -48,6 +50,11 @@ export const AuthStoreModel = types
     },
   }))
   .actions((self) => ({
+    setSelfProjects(projects: Project[]) {
+      self.selfProjects.replace(projects)
+    },
+  }))
+  .actions((self) => ({
     logout: flow(function* () {
       self.reset()
     }),
@@ -71,6 +78,29 @@ export const AuthStoreModel = types
       try {
         const getProjectsResult = yield projectApi.getProjects(self?.accessToken ?? "")
         self.setAllProjects(getProjectsResult.projects)
+      } catch (e) {
+        console.tron.log(e)
+      }
+    }),
+  }))
+  .actions((self) => ({
+    getSelfProjects: flow(function* () {
+      const projectApi = new ProjectApi()
+      try {
+        const getProjectsResult = yield projectApi.getProjects(self?.accessToken ?? "", {
+          ownerId: self.currentUser?.id,
+        })
+        self.setSelfProjects(getProjectsResult.projects)
+      } catch (e) {
+        console.tron.log(e)
+      }
+    }),
+  }))
+  .actions((self) => ({
+    createDonation: flow(function* (projectId: string, donation: Donation) {
+      const projectApi = new ProjectApi()
+      try {
+        yield projectApi.createDonation(self?.accessToken ?? "", projectId, donation)
       } catch (e) {
         console.tron.log(e)
       }
